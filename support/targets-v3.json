@@ -340,7 +340,7 @@
       ],
       "kernelVersions": ["6.6.92"],
       "exploit": {
-        "url": "https://raw.githubusercontent.com/artmidzy/Root-My-Galaxy-Payloads/main/artifacts/a34x-A346EXXSFFZG4/cve-2026-43499-v16_final.so",
+        "url": "https://raw.githubusercontent.com/artmidzy/Root-My-Galaxy-Payloads/main/artifacts/a34x-A346EXXSFFZG4/cve-2026-43499-v16_rev6.so",
         "size": 104128
       },
       "kernelsu": {

