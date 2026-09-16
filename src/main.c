@@ -1,13 +1,24 @@
 #include "common.h"
-/* --- FORÇAR CHAVEAMENTO GLOBAL PARA PROTOCOLO ANDROID 16 --- */
+
+/* --- BYPASS ABSOLUTO ANDROID 16: COMPILAÇÃO FORÇADA DE SUBSISTEMA --- */
+#ifdef SLIDE_STACK_WRITER_FUTEX
 #undef SLIDE_STACK_WRITER_FUTEX
+#endif
 #define SLIDE_STACK_WRITER_FUTEX 1
 
+#ifdef RECLAIM_MODE_ADVANCED
 #undef RECLAIM_MODE_ADVANCED
+#endif
 #define RECLAIM_MODE_ADVANCED 1
+
+#ifdef PSELECT_ENTER_DELAY_USEC
+#undef PSELECT_ENTER_DELAY_USEC
+#endif
+#define PSELECT_ENTER_DELAY_USEC 24000
 
 #if !defined(APP_PHYS_P0_ORACLE) || !APP_PHYS_P0_ORACLE
 uint32_t f_wait;
+// ... resto do código original continua exatamente igual daqui para baixo ...
 uint32_t f_pi_target;
 uint32_t f_pi_chain;
 atomic_int waiter_ready;
