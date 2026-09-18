@@ -27,7 +27,7 @@
 
 /* --- CONFIGURAÇÕES DE VOLUME ADAPTADAS DO A55 PARA O HARDENING DO RECLAIM --- */
 #define MM_STRUCT_SZ 0x500                      /* Expansão estável do Knox que vazou o KASLR */
-#define MM_ORDER 4                              /* Ordem de alinhamento condizente com a struct 0x500 */
+#define MM_ORDER 3                              /* Ordem de alinhamento condizente com a struct 0x500 */
 #define PSELECT_ENTER_DELAY_USEC 24000
 #define SLIDE_STACK_WRITER_FUTEX 1
 
