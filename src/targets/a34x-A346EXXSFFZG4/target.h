@@ -29,6 +29,12 @@
 #define MM_STRUCT_SZ 0x500                      /* Expansão estável do Knox que vazou o KASLR */
 #define MM_ORDER 4                              /* Ordem de alinhamento condizente com a struct 0x500 */
 #define PSELECT_ENTER_DELAY_USEC 24000
+#define SLIDE_STACK_WRITER_FUTEX 1
+
+#define SLIDE_KSNITCH_APPENDED_FUTEXES 2048
+#define SLIDE_KSNITCH_REPEAT_MEASUREMENT 64
+
+#define RECLAIM_MODE_ADVANCED 1
 #define APP_SLIDE_RECLAIM_SENDS 192             /* Força bruta do A55: 192 disparos contínuos */
 #define APP_SLIDE_RECLAIM_SNDBUF 16777216       /* Buffer maciço de 16MB para segurar as páginas na RAM */
 #define APP_MM_LATE_DRAIN_TRIGGERS 2
