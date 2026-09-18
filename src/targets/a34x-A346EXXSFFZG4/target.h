@@ -13,10 +13,10 @@
 #endif
 
 /* ------------------------------------------------------------------------- */
-/* 1. OFFSETS ABSOLUTOS DO SEU GALAXY A34 (EXTRAÍDOS VIA LLVM-NM)           */
+/* 1. OFFSETS ABSOLUTOS DO SEU GALAXY A34 (EXTRAÍDOS VIA VMLINUX-TO-ELF)     */
 /* ------------------------------------------------------------------------- */
 #define CONFIG_OFFSET_COMMIT_CREDS   0xffffffc08019514c
-#define CONFIG_OFFSET_PREPARE_CRED   0xffffffc0810e7a00
+#define CONFIG_OFFSET_PREPARE_CRED   0xffffffc080194c98
 #define CONFIG_OFFSET_INIT_TASK      0xffffffc08236e340
 
 #define KIMAGE_TEXT_BASE 0xffffffc008000000ULL
@@ -227,4 +227,3 @@
 #define FOPS_SHOW_FDINFO_OFF 0xe0
 
 #endif /* TARGET_H */
-
