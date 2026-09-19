@@ -1,22 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-/* --- BYPASS CRÍTICO ANDROID 16: CHAVEAMENTO GLOBAL DE ARQUITETURA --- */
-#ifdef SLIDE_STACK_WRITER_FUTEX
-#undef SLIDE_STACK_WRITER_FUTEX
-#endif
-#define SLIDE_STACK_WRITER_FUTEX 1
-
-#ifdef RECLAIM_MODE_ADVANCED
-#undef RECLAIM_MODE_ADVANCED
-#endif
-#define RECLAIM_MODE_ADVANCED 1
-
-#ifdef PSELECT_ENTER_DELAY_USEC
-#undef PSELECT_ENTER_DELAY_USEC
-#endif
-#define PSELECT_ENTER_DELAY_USEC 24000
-
 #define _GNU_SOURCE
 
 /* Força a leitura do cabeçalho legítimo através do mapeamento do Makefile */
