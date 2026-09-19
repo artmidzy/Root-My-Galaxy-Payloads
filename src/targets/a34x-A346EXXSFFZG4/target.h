@@ -23,7 +23,7 @@
 #define P0_PAGE_OFFSET 0xffffff8000000000ULL
 #define P0_PHYS_OFFSET 0x40000000ULL           /* Mantido o padrão do hardware do A34 */
 #define P0_KERNEL_PHYS_LOAD 0x40000000ULL       /* Mantido o padrão do hardware do A34 */
-#define SKB_DATA_DELTA (-0xd80LL)               /* Mantido o delta calibrado do seu A34 */
+#define SKB_DATA_DELTA (-0x1000LL)               /* Mantido o delta calibrado do seu A34 */
 
 /* --- CONFIGURAÇÕES DE VOLUME ADAPTADAS DO A55 PARA O HARDENING DO RECLAIM --- */
 #define MM_STRUCT_SZ 0x400                      /* Expansão estável do Knox que vazou o KASLR */
