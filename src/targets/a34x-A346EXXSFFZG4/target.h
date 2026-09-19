@@ -35,6 +35,8 @@
 #define SLIDE_KSNITCH_REPEAT_MEASUREMENT 64
 
 #define RECLAIM_MODE_ADVANCED 1
+#define SLIDE_RECLAIM_MODE_ADVANCED 1
+
 #define APP_SLIDE_RECLAIM_SENDS 16             /* Força bruta do A55: 192 disparos contínuos */
 #define APP_SLIDE_RECLAIM_SNDBUF 8388608      /* Buffer maciço de 16MB para segurar as páginas na RAM */
 #define APP_MM_LATE_DRAIN_TRIGGERS 2
